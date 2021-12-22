@@ -12,5 +12,5 @@ public record ClassifiedAdId
     }
 
     public static implicit operator Guid(ClassifiedAdId id) => id.Value;
-    public static explicit operator ClassifiedAdId(Guid v) => new(v);
+    public static implicit operator ClassifiedAdId(Guid v) => new(v);
 }

@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-
 namespace Marketplace.Domain;
 
 public record Money
@@ -22,36 +20,36 @@ public record Money
             throw new ArgumentOutOfRangeException(nameof(amount), $"Amount in {currencyCode} can not have more than {currency.DecimalPlaces} decimals");
 
         Amount = amount;
-        Currency = currency;
+        CurrencyCode = currencyCode;
     }
 
-    private Money(decimal amount, CurrencyDetails currency)
+    protected Money(decimal amount, string currencyCode)
     {
         Amount = amount;
-        Currency = currency;
+        CurrencyCode = currencyCode;
     }
 
     public decimal Amount { get; }
-    public CurrencyDetails Currency { get; }
+    public string CurrencyCode { get; }
 
     public Money Add(Money summand)
     {
-        if (Currency != summand.Currency)
+        if (CurrencyCode != summand.CurrencyCode)
             throw new CurrencyMismatchException("Cannot sum amounts with different currencies");
-        return new(Amount + summand.Amount, Currency);
+        return new(Amount + summand.Amount, CurrencyCode);
     }
     public Money Subtract(Money subtrahend)
     {
-        if (Currency != subtrahend.Currency)
+        if (CurrencyCode != subtrahend.CurrencyCode)
             throw new CurrencyMismatchException("Cannot subtract amounts with different currencies");
-        return new(Amount - subtrahend.Amount, Currency);
+        return new(Amount - subtrahend.Amount, CurrencyCode);
     }
 
     public static Money operator +(Money a, Money b) => a.Add(b);
     public static Money operator -(Money a, Money b) => a.Subtract(b);
 
     public override string ToString()
-        => $"{Currency.CurrencyCode} {Amount}";
+        => $"{CurrencyCode} {Amount}";
 }
 
 [Serializable]

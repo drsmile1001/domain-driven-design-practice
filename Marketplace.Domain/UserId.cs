@@ -12,5 +12,5 @@ public record UserId
     }
 
     public static implicit operator Guid(UserId id) => id.Value;
-    public static explicit operator UserId(Guid v) => new(v);
+    public static implicit operator UserId(Guid v) => new(v);
 }
