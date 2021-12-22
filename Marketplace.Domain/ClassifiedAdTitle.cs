@@ -25,4 +25,6 @@ public record ClassifiedAdTitle
             throw new ArgumentOutOfRangeException(nameof(value), "Title cannot be longer than 100 characters");
         Value = value;
     }
+
+    public static implicit operator string(ClassifiedAdTitle title) => title.Value;
 }
