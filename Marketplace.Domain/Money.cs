@@ -5,43 +5,58 @@ namespace Marketplace.Domain;
 public record Money
 {
     private const string DefaultCurrency = "EUR";
-    public static Money FromDecimal(decimal amount, string currency = DefaultCurrency)
-        => new(amount, currency);
+    public static Money FromDecimal(decimal amount, string currency, ICurrencyLookup currencyLookup)
+        => new(amount, currency, currencyLookup);
 
-    public static Money FromString(string amount, string currency = DefaultCurrency)
-        => new(decimal.Parse(amount), currency);
+    public static Money FromString(string amount, string currency, ICurrencyLookup currencyLookup)
+        => new(decimal.Parse(amount), currency, currencyLookup);
 
-    protected Money(decimal amount, string currencyCode = DefaultCurrency)
+    protected Money(decimal amount, string currencyCode, ICurrencyLookup currencyLookup)
     {
-        if (decimal.Round(amount, 2) != amount)
-            throw new ArgumentOutOfRangeException(nameof(amount), "Amount cannot have more than two decimals");
+        if (string.IsNullOrWhiteSpace(currencyCode))
+            throw new ArgumentNullException(nameof(currencyCode), "Currency code must be specified");
+        var currency = currencyLookup.FindCurrency(currencyCode);
+        if (!currency.InUse)
+            throw new ArgumentException($"Currency {currencyCode} is not valid");
+
+        if (decimal.Round(amount, currency.DecimalPlaces) != amount)
+            throw new ArgumentOutOfRangeException(nameof(amount), $"Amount in {currencyCode} can not have more than {currency.DecimalPlaces} decimals");
 
         Amount = amount;
-        CurrencyCode = currencyCode;
+        Currency = currency;
+    }
+
+    private Money(decimal amount, CurrencyDetails currency)
+    {
+        Amount = amount;
+        Currency = currency;
     }
 
     public decimal Amount { get; }
-    public string CurrencyCode { get; }
+    public CurrencyDetails Currency { get; }
 
     public Money Add(Money summand)
     {
-        if (CurrencyCode != summand.CurrencyCode)
+        if (Currency != summand.Currency)
             throw new CurrencyMismatchException("Cannot sum amounts with different currencies");
-        return new(Amount + summand.Amount, CurrencyCode);
+        return new(Amount + summand.Amount, Currency);
     }
     public Money Subtract(Money subtrahend)
     {
-        if (CurrencyCode != subtrahend.CurrencyCode)
+        if (Currency != subtrahend.Currency)
             throw new CurrencyMismatchException("Cannot subtract amounts with different currencies");
-        return new(Amount - subtrahend.Amount, CurrencyCode);
+        return new(Amount - subtrahend.Amount, Currency);
     }
 
     public static Money operator +(Money a, Money b) => a.Add(b);
     public static Money operator -(Money a, Money b) => a.Subtract(b);
+
+    public override string ToString()
+        => $"{Currency.CurrencyCode} {Amount}";
 }
 
 [Serializable]
-internal class CurrencyMismatchException : Exception
+public class CurrencyMismatchException : Exception
 {
     public CurrencyMismatchException(string? message) : base(message)
     {
