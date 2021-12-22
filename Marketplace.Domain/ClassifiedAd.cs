@@ -24,19 +24,48 @@ public class ClassifiedAd
     public Price? Price { get; private set; }
     public UserId? ApprovedBy { get; private set; }
 
-    public void SetTitle(ClassifiedAdTitle title) => Title = title;
-    public void UpdateText(ClassifiedAdText text) => Text = text;
-    public void UpdatePrice(Price price) => Price = price;
+    public void SetTitle(ClassifiedAdTitle title)
+    {
+        Title = title;
+        EnsureValidState();
+    }
+
+    public void UpdateText(ClassifiedAdText text)
+    {
+        Text = text;
+        EnsureValidState();
+    }
+
+    public void UpdatePrice(Price price)
+    {
+        Price = price;
+        EnsureValidState();
+    }
 
     public void RequestToPublish()
     {
-        if (Title == null)
-            throw new InvalidEntityStateException(this, "Title cannot be empty");
-        if (Text == null)
-            throw new InvalidEntityStateException(this, "Text cannot be empty");
-        if (Price?.Amount == 0)
-            throw new InvalidEntityStateException(this, "Price cannot be zero");
         State = ClassifiedAdState.PendingReview;
+        EnsureValidState();
+    }
+
+    protected void EnsureValidState()
+    {
+        var vaild = State switch
+        {
+            ClassifiedAdState.PendingReview =>
+                Title != null
+                && Text != null
+                && Price?.Amount > 0,
+            ClassifiedAdState.Active =>
+                Title != null
+                && Text != null
+                && Price?.Amount > 0
+                && ApprovedBy != null,
+            _ => true
+        };
+        if (!vaild)
+            throw new InvalidEntityStateException(this, $"Post-checks faild in state {State}");
+
     }
 
 }
