@@ -10,4 +10,7 @@ public record UserId
             throw new ArgumentNullException(nameof(value));
         Value = value;
     }
+
+    public static implicit operator Guid(UserId id) => id.Value;
+    public static explicit operator UserId(Guid v) => new(v);
 }

@@ -4,7 +4,6 @@ namespace Marketplace.Domain;
 
 public record Money
 {
-    private const string DefaultCurrency = "EUR";
     public static Money FromDecimal(decimal amount, string currency, ICurrencyLookup currencyLookup)
         => new(amount, currency, currencyLookup);
 
