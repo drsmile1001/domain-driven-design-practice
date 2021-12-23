@@ -67,7 +67,8 @@ public class ClassifiedAd : AggregateRoot
         ClassifiedAId = Id,
         Uri = pictureUri.ToString(),
         Height = size.Height,
-        Width = size.Width
+        Width = size.Width,
+        Order = Pictures.Max(x => x.Order) + 1
     });
 
     protected override void When(object @event)
@@ -97,13 +98,9 @@ public class ClassifiedAd : AggregateRoot
                 State = ClassifiedAdState.PendingReview;
                 break;
             case Events.PictureAddedToAClassifiedAd e:
-                var newPicture = new Picture
-                {
-                    Id = new PictureId(e.PictureId),
-                    Size = new PictureSize(e.Width, e.Height),
-                    Location = new Uri(e.Uri),
-                    Order = Pictures.Max(x => x.Order) + 1
-                };
+                var picture = new Picture(Apply);
+                ApplyToEntity(picture, e);
+                Pictures.Add(picture);
                 break;
             default:
                 break;

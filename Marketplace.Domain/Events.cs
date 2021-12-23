@@ -39,5 +39,6 @@ public static class Events
         public string Uri { get; init; } = null!;
         public int Height { get; init; }
         public int Width { get; init; }
+        public int Order { get; init; }
     }
 }
