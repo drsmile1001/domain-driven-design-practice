@@ -5,11 +5,14 @@ public class ClassifiedAd : AggregateRoot
 {
     public ClassifiedAd(ClassifiedAdId id, UserId ownerId)
     //TODO: Nullable 後，建構式也使用與其他領域事件相同做法會導致語義不是很正確
-    => Apply(new Events.ClassifiedAdCreated
     {
-        Id = id,
-        OwnerId = ownerId
-    });
+        Pictures = new List<Picture>();
+        Apply(new Events.ClassifiedAdCreated
+        {
+            Id = id,
+            OwnerId = ownerId
+        });
+    }
 
     public enum ClassifiedAdState
     {
@@ -26,6 +29,8 @@ public class ClassifiedAd : AggregateRoot
     public ClassifiedAdText? Text { get; private set; }
     public Price? Price { get; private set; }
     public UserId? ApprovedBy { get; private set; }
+    public List<Picture> Pictures { get; private set; }
+
 
     public void SetTitle(ClassifiedAdTitle title)
     => Apply(new Events.ClassifiedAdTitleChanged
@@ -55,6 +60,16 @@ public class ClassifiedAd : AggregateRoot
         Id = Id
     });
 
+    public void AddPicture(Uri pictureUri, PictureSize size)
+    => Apply(new Events.PictureAddedToAClassifiedAd
+    {
+        PictureId = new Guid(),
+        ClassifiedAId = Id,
+        Uri = pictureUri.ToString(),
+        Height = size.Height,
+        Width = size.Width
+    });
+
     protected override void When(object @event)
     {
         switch (@event)
@@ -80,6 +95,15 @@ public class ClassifiedAd : AggregateRoot
                 break;
             case Events.ClassifiedAdSentForReview:
                 State = ClassifiedAdState.PendingReview;
+                break;
+            case Events.PictureAddedToAClassifiedAd e:
+                var newPicture = new Picture
+                {
+                    Id = new PictureId(e.PictureId),
+                    Size = new PictureSize(e.Width, e.Height),
+                    Location = new Uri(e.Uri),
+                    Order = Pictures.Max(x => x.Order) + 1
+                };
                 break;
             default:
                 break;
