@@ -1,7 +1,7 @@
 ﻿using Marketplace.Framework;
 
 namespace Marketplace.Domain;
-public class ClassifiedAd : Entity
+public class ClassifiedAd : AggregateRoot
 {
     public ClassifiedAd(ClassifiedAdId id, UserId ownerId)
     //TODO: Nullable 後，建構式也使用與其他領域事件相同做法會導致語義不是很正確
