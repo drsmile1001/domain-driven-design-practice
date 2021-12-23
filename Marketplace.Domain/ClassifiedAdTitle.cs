@@ -27,4 +27,5 @@ public record ClassifiedAdTitle
     }
 
     public static implicit operator string(ClassifiedAdTitle title) => title.Value;
+    public static implicit operator ClassifiedAdTitle(string title) => FromString(title);
 }
