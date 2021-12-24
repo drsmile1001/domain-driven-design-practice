@@ -8,6 +8,7 @@ namespace Marketplace.Api;
 public class ClassifiedAdsCommandsApi : ControllerBase
 {
     private readonly ClassifiedAdsApplicationService _applicationService;
+
     public ClassifiedAdsCommandsApi(ClassifiedAdsApplicationService applicationService)
     {
         _applicationService = applicationService;

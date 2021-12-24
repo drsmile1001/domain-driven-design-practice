@@ -20,5 +20,5 @@ public class ClassifiedAdRepository : IClassifiedAdRepository
         => _session.LoadAsync<ClassifiedAd>(EntityId(id));
 
     private static string EntityId(ClassifiedAdId id)
-        => $"ClassifiedAd/{id}";
+        => $"ClassifiedAd/{id.Value}";
 }

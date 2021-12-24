@@ -6,18 +6,18 @@ namespace Marketplace.Test;
 
 public class FakeCurrencyLookup : ICurrencyLookup
 {
-    private static readonly IEnumerable<CurrencyDetails>
+    private static readonly IEnumerable<Currency>
     _currencies = new[]
     {
-        new CurrencyDetails("EUR",true,2),
-        new CurrencyDetails("USD",true,2),
-        new CurrencyDetails("JPY",true,0),
-        new CurrencyDetails("DEM",false,2),
+        new Currency("EUR",true,2),
+        new Currency("USD",true,2),
+        new Currency("JPY",true,0),
+        new Currency("DEM",false,2),
     };
 
-    public CurrencyDetails FindCurrency(string currencyCode)
+    public Currency FindCurrency(string currencyCode)
     {
         var currency = _currencies.FirstOrDefault(c => c.CurrencyCode == currencyCode);
-        return currency ?? CurrencyDetails.None;
+        return currency ?? Currency.None;
     }
 }
