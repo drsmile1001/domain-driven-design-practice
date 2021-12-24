@@ -1,4 +1,4 @@
-using Marketplace.Framework;
+﻿using Marketplace.Framework;
 
 namespace Marketplace.Domain;
 public class ClassifiedAd : AggregateRoot
@@ -125,17 +125,25 @@ public class ClassifiedAd : AggregateRoot
             ClassifiedAdState.PendingReview =>
                 Title != null
                 && Text != null
-                && Price?.Amount > 0,
+                && Price?.Amount > 0
+                && FirstPicture.HasCorrectSize(),
             ClassifiedAdState.Active =>
                 Title != null
                 && Text != null
                 && Price?.Amount > 0
-                && ApprovedBy != null,
+                && ApprovedBy != null
+                && FirstPicture.HasCorrectSize(),
             _ => true
         };
         if (!vaild)
             throw new InvalidEntityStateException(this, $"Post-checks faild in state {State}");
 
     }
+
+    private Picture? FindPicture(PictureId id)
+        => Pictures.FirstOrDefault(x => x.Id == id);
+
+    private Picture? FirstPicture
+        => Pictures.OrderBy(x => x.Order).FirstOrDefault();
 }
 
