@@ -1,4 +1,6 @@
-namespace Marketplace.Domain;
+using Marketplace.Domain.Shared;
+
+namespace Marketplace.Domain.ClassifiedAd;
 
 public record Price : Money
 {

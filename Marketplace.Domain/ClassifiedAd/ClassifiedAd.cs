@@ -1,6 +1,7 @@
-﻿using Marketplace.Framework;
+﻿using Marketplace.Domain.Shared;
+using Marketplace.Framework;
 
-namespace Marketplace.Domain;
+namespace Marketplace.Domain.ClassifiedAd;
 public class ClassifiedAd : AggregateRoot
 {
     public ClassifiedAd(ClassifiedAdId id, UserId ownerId)

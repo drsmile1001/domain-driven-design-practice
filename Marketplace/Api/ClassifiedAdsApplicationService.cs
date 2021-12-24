@@ -1,4 +1,6 @@
 using Marketplace.Domain;
+using Marketplace.Domain.ClassifiedAd;
+using Marketplace.Domain.Shared;
 using Marketplace.Framework;
 using static Marketplace.Contracts.ClassifiedAds;
 

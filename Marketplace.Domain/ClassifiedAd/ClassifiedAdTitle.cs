@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Marketplace.Domain;
+namespace Marketplace.Domain.ClassifiedAd;
 
 public record ClassifiedAdTitle
 {

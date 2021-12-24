@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Marketplace.Domain;
 using System.Linq;
+using Marketplace.Domain.Shared;
 
 namespace Marketplace.Test;
 

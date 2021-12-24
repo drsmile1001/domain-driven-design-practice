@@ -1,5 +1,6 @@
 using System;
-using Marketplace.Domain;
+using Marketplace.Domain.ClassifiedAd;
+using Marketplace.Domain.Shared;
 using Xunit;
 
 namespace Marketplace.Test;
@@ -9,7 +10,7 @@ public class ClassifiedAd_Publish_Spec
     private readonly ClassifiedAd _classifiedAd;
     public ClassifiedAd_Publish_Spec()
     {
-        _classifiedAd = new ClassifiedAd((ClassifiedAdId)Guid.NewGuid(), (UserId)Guid.NewGuid());
+        _classifiedAd = new ClassifiedAd(Guid.NewGuid(), Guid.NewGuid());
     }
 
     [Fact]

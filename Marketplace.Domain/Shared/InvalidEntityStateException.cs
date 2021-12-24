@@ -1,4 +1,4 @@
-namespace Marketplace.Domain;
+namespace Marketplace.Domain.Shared;
 
 [Serializable]
 public class InvalidEntityStateException : Exception
