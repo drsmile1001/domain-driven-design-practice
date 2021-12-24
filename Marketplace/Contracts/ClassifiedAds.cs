@@ -7,6 +7,7 @@ public static class ClassifiedAds
         public class Create
         {
             public Guid Id { get; set; }
+
             public Guid OwnerId { get; set; }
         }
 
@@ -20,13 +21,16 @@ public static class ClassifiedAds
         public class UpdateText
         {
             public Guid Id { get; set; }
+
             public string Text { get; set; } = null!;
         }
 
         public class UpdatePrice
         {
             public Guid Id { get; set; }
+
             public decimal Price { get; set; }
+
             public string Currency { get; set; } = null!;
         }
 
