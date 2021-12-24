@@ -27,10 +27,25 @@ public class Picture : Entity
                 };
                 Order = e.Order;
                 break;
+            case Events.ClassifiedAdPictureResized e:
+                Size = new PictureSize
+                {
+                    Height = e.Height,
+                    Width = e.Width
+                };
+                break;
             default:
                 break;
         }
     }
+
+    internal void Resize(PictureSize newSize)
+        => Apply(new Events.ClassifiedAdPictureResized
+        {
+            PictureId = Id.Value,
+            Height = newSize.Height,
+            Width = newSize.Width
+        });
 }
 
 public record PictureSize

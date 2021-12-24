@@ -41,4 +41,11 @@ public static class Events
         public int Width { get; init; }
         public int Order { get; init; }
     }
+
+    public class ClassifiedAdPictureResized
+    {
+        public Guid PictureId { get; init; }
+        public int Height { get; init; }
+        public int Width { get; init; }
+    }
 }

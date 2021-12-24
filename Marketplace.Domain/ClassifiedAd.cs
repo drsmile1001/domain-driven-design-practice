@@ -1,4 +1,4 @@
-﻿using Marketplace.Framework;
+using Marketplace.Framework;
 
 namespace Marketplace.Domain;
 public class ClassifiedAd : AggregateRoot
@@ -70,6 +70,16 @@ public class ClassifiedAd : AggregateRoot
         Width = size.Width,
         Order = Pictures.Max(x => x.Order) + 1
     });
+
+    public void ResizePicture(PictureId pictureId, PictureSize newSize)
+    {
+        var picture = FindPicture(pictureId);
+        if (picture == null)
+            throw new InvalidOperationException(
+                "Cannot resize a picture that I don't have"
+            );
+        picture.Resize(newSize);
+    }
 
     protected override void When(object @event)
     {
