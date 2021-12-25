@@ -1,5 +1,4 @@
-using Marketplace;
-using Marketplace.Api;
+using Marketplace.ClassifiedAd;
 using Marketplace.Domain.ClassifiedAd;
 using Marketplace.Domain.Shared;
 using Marketplace.Framework;

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using static Marketplace.Contracts.ClassifiedAds;
+using static Marketplace.ClassifiedAd.Contracts;
 
-namespace Marketplace.Api;
+namespace Marketplace.ClassifiedAd;
 
 [ApiController]
 [Route("/ad")]
