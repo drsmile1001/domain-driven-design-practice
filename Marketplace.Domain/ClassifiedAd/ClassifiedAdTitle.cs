@@ -4,6 +4,27 @@ namespace Marketplace.Domain.ClassifiedAd;
 
 public record ClassifiedAdTitle
 {
+    protected ClassifiedAdTitle()
+    {
+        Value = string.Empty;
+    }
+
+    private ClassifiedAdTitle(string value)
+    {
+        if (value.Length > 100)
+        {
+            throw new ArgumentOutOfRangeException(nameof(value), "Title cannot be longer than 100 characters");
+        }
+
+        Value = value;
+    }
+
+    public string Value { get; }
+
+    public static implicit operator string(ClassifiedAdTitle title) => title.Value;
+
+    public static implicit operator ClassifiedAdTitle(string title) => FromString(title);
+
     public static ClassifiedAdTitle FromString(string title)
         => new(title);
 
@@ -15,22 +36,5 @@ public record ClassifiedAdTitle
             .Replace("<b>", "**")
             .Replace("</b>", "**");
         return new ClassifiedAdTitle(Regex.Replace(supportedTagsReplaced, "<.*?>", string.Empty));
-
     }
-    public string Value { get; }
-
-    private ClassifiedAdTitle(string value)
-    {
-        if (value.Length > 100)
-            throw new ArgumentOutOfRangeException(nameof(value), "Title cannot be longer than 100 characters");
-        Value = value;
-    }
-
-    protected ClassifiedAdTitle()
-    {
-        Value = string.Empty;
-    }
-
-    public static implicit operator string(ClassifiedAdTitle title) => title.Value;
-    public static implicit operator ClassifiedAdTitle(string title) => FromString(title);
 }

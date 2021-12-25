@@ -4,14 +4,26 @@ namespace Marketplace.Domain.ClassifiedAd;
 
 public class Picture : Entity
 {
-    public Picture(Action<object> applier) : base(applier)
+    public Picture(Action<object> applier)
+        : base(applier)
     {
     }
 
     public PictureId? Id { get; set; }
+
     internal PictureSize? Size { get; set; }
+
     internal Uri? Location { get; set; }
+
     internal int Order { get; set; }
+
+    internal void Resize(PictureSize newSize)
+        => Apply(new Events.ClassifiedAdPictureResized
+        {
+            PictureId = Id.Value,
+            Height = newSize.Height,
+            Width = newSize.Width,
+        });
 
     protected override void When(object @event)
     {
@@ -23,7 +35,7 @@ public class Picture : Entity
                 Size = new PictureSize
                 {
                     Height = e.Height,
-                    Width = e.Width
+                    Width = e.Width,
                 };
                 Order = e.Order;
                 break;
@@ -31,21 +43,13 @@ public class Picture : Entity
                 Size = new PictureSize
                 {
                     Height = e.Height,
-                    Width = e.Width
+                    Width = e.Width,
                 };
                 break;
             default:
                 break;
         }
     }
-
-    internal void Resize(PictureSize newSize)
-        => Apply(new Events.ClassifiedAdPictureResized
-        {
-            PictureId = Id.Value,
-            Height = newSize.Height,
-            Width = newSize.Width
-        });
 }
 
 public record PictureSize

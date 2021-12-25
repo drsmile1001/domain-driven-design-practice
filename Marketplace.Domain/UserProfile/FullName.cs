@@ -3,16 +3,6 @@ namespace Marketplace.Domain.UserProfile;
 public record FullName
 {
     internal FullName(string fullName) => Value = fullName;
-    public string Value { get; }
-    public static FullName FromString(string fullName)
-    {
-        if (string.IsNullOrWhiteSpace(fullName))
-        {
-            throw new ArgumentNullException(nameof(fullName));
-        }
-
-        return new FullName(fullName);
-    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FullName"/> class.
@@ -21,5 +11,17 @@ public record FullName
     protected FullName()
     {
         Value = string.Empty;
+    }
+
+    public string Value { get; }
+
+    public static FullName FromString(string fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName))
+        {
+            throw new ArgumentNullException(nameof(fullName));
+        }
+
+        return new FullName(fullName);
     }
 }

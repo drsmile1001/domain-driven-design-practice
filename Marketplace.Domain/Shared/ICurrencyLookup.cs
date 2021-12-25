@@ -7,5 +7,5 @@ public interface ICurrencyLookup
 
 public record Currency(string CurrencyCode, bool InUse, int DecimalPlaces)
 {
-    public readonly static Currency None = new("", false, 0);
+    public static readonly Currency None = new(string.Empty, false, 0);
 }
