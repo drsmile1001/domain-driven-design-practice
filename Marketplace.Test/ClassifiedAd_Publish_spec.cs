@@ -2,6 +2,7 @@ using System;
 using Marketplace.Domain.ClassifiedAd;
 using Marketplace.Domain.Shared;
 using Xunit;
+using static Marketplace.Domain.Shared.DomainExceptions;
 
 namespace Marketplace.Test;
 

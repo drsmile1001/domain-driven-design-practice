@@ -28,7 +28,7 @@ public record ClassifiedAdTitle
 
     protected ClassifiedAdTitle()
     {
-        Value = "";
+        Value = string.Empty;
     }
 
     public static implicit operator string(ClassifiedAdTitle title) => title.Value;

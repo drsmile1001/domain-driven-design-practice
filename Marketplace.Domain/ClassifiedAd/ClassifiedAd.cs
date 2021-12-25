@@ -1,5 +1,6 @@
 ﻿using Marketplace.Domain.Shared;
 using Marketplace.Framework;
+using static Marketplace.Domain.Shared.DomainExceptions;
 
 namespace Marketplace.Domain.ClassifiedAd;
 public class ClassifiedAd : AggregateRoot
@@ -137,8 +138,9 @@ public class ClassifiedAd : AggregateRoot
             _ => true
         };
         if (!vaild)
+        {
             throw new InvalidEntityStateException(this, $"Post-checks faild in state {State}");
-
+        }
     }
 
     private Picture? FindPicture(PictureId id)
