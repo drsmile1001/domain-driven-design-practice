@@ -2,6 +2,8 @@ namespace Marketplace.Domain.UserProfile;
 
 public record FullName
 {
+    public static readonly FullName Empty = new();
+
     internal FullName(string fullName) => Value = fullName;
 
     /// <summary>
@@ -14,6 +16,8 @@ public record FullName
     }
 
     public string Value { get; }
+
+    public static implicit operator string(FullName value) => value.Value;
 
     public static FullName FromString(string fullName)
     {

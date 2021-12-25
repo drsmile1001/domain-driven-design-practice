@@ -5,16 +5,11 @@ using static Marketplace.Domain.Shared.DomainExceptions;
 namespace Marketplace.Domain.ClassifiedAd;
 public class ClassifiedAd : AggregateRoot
 {
-    public ClassifiedAd(ClassifiedAdId id, UserId ownerId)
+    public ClassifiedAd(ClassifiedAdId id, UserId ownerId) => Apply(new Events.ClassifiedAdCreated
     {
-        // TODO: Nullable 後，建構式也使用與其他領域事件相同做法會導致語義不是很正確
-        Pictures = new List<Picture>();
-        Apply(new Events.ClassifiedAdCreated
-        {
-            Id = id,
-            OwnerId = ownerId,
-        });
-    }
+        Id = id,
+        OwnerId = ownerId,
+    });
 
     public enum ClassifiedAdState
     {
@@ -24,9 +19,9 @@ public class ClassifiedAd : AggregateRoot
         MarkedAsSold,
     }
 
-    public ClassifiedAdId Id { get; private set; }
+    public ClassifiedAdId Id { get; private set; } = ClassifiedAdId.Empty;
 
-    public UserId OwnerId { get; private set; }
+    public UserId OwnerId { get; private set; } = UserId.Empty;
 
     public ClassifiedAdState State { get; private set; }
 
@@ -38,7 +33,7 @@ public class ClassifiedAd : AggregateRoot
 
     public UserId? ApprovedBy { get; private set; }
 
-    public List<Picture> Pictures { get; private set; }
+    public List<Picture> Pictures { get; private set; } = new List<Picture>();
 
     private Picture? FirstPicture
         => Pictures.OrderBy(x => x.Order).FirstOrDefault();

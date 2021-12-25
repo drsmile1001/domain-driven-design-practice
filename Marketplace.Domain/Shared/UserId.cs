@@ -2,6 +2,8 @@ namespace Marketplace.Domain.Shared;
 
 public record UserId
 {
+    public static readonly UserId Empty = new();
+
     public UserId(Guid value)
     {
         if (value == default)
@@ -10,6 +12,11 @@ public record UserId
         }
 
         Value = value;
+    }
+
+    private UserId()
+    {
+        Value = default;
     }
 
     public Guid Value { get; }

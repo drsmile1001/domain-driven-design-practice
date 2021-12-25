@@ -2,6 +2,8 @@ namespace Marketplace.Domain.ClassifiedAd;
 
 public record ClassifiedAdId
 {
+    public static readonly ClassifiedAdId Empty = new();
+
     public ClassifiedAdId(Guid value)
     {
         if (value == default)
@@ -10,6 +12,11 @@ public record ClassifiedAdId
         }
 
         Value = value;
+    }
+
+    private ClassifiedAdId()
+    {
+        Value = Guid.Empty;
     }
 
     public Guid Value { get; }

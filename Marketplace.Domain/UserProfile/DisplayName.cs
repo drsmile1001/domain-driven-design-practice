@@ -4,6 +4,8 @@ namespace Marketplace.Domain.UserProfile;
 
 public class DisplayName
 {
+    public static readonly DisplayName Empty = new();
+
     internal DisplayName(string value)
     {
         Value = value;
