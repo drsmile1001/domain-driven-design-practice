@@ -1,5 +1,7 @@
 using Marketplace.ClassifiedAd;
+using Marketplace.UserProfile;
 using Marketplace.Domain.ClassifiedAd;
+using Marketplace.Domain.UserProfile;
 using Marketplace.Domain.Shared;
 using Marketplace.Framework;
 using Marketplace.Infrastructure;
@@ -19,6 +21,8 @@ var store = new DocumentStore
 
 store.Initialize();
 
+var purgomalumClient = new PurgomalumClient(new HttpClient());
+
 // Add services to the container.
 builder.Services.AddControllers();
 
@@ -29,7 +33,12 @@ builder.Services.AddSingleton<ICurrencyLookup, FixedCurrencyLookup>();
 builder.Services.AddScoped(c => store.OpenAsyncSession());
 builder.Services.AddScoped<IUnitOfWork, RavenDbUnitOfWork>();
 builder.Services.AddScoped<IClassifiedAdRepository, ClassifiedAdRepository>();
+builder.Services.AddScoped<IUserProfileRepositoy, UserProfileRepository>();
 builder.Services.AddScoped<ClassifiedAdsApplicationService>();
+builder.Services.AddScoped(c => new UserProfileApplicationService(
+    c.GetRequiredService<IUserProfileRepositoy>(),
+    c.GetRequiredService<IUnitOfWork>(),
+    text => purgomalumClient.CheckForProfanity(text).GetAwaiter().GetResult()));
 
 var app = builder.Build();
 

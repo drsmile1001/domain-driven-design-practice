@@ -5,7 +5,7 @@ namespace Marketplace.Domain.UserProfile;
 
 public class UserProfile : AggregateRoot
 {
-    public UserProfile(UserId id, FullName fullName, DisplayName displayName, string photoUrl)
+    public UserProfile(UserId id, FullName fullName, DisplayName displayName)
         => Apply(new Events.UserRegistered
         {
             UserId = id,
