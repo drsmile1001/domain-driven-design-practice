@@ -22,6 +22,10 @@ public record Price : Money
         }
     }
 
+    protected Price()
+    {
+    }
+
     /// <summary>
     /// 工廠方法建立值物件，將會檢查是否有效.
     /// </summary>

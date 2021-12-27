@@ -11,6 +11,10 @@ public class ClassifiedAd : AggregateRoot
         OwnerId = ownerId,
     });
 
+    protected ClassifiedAd()
+    {
+    }
+
     public enum ClassifiedAdState
     {
         PendingReview,
@@ -19,9 +23,9 @@ public class ClassifiedAd : AggregateRoot
         MarkedAsSold,
     }
 
-    public ClassifiedAdId Id { get; private set; } = ClassifiedAdId.Empty;
+    public ClassifiedAdId Id { get; private set; } = null!;
 
-    public UserId OwnerId { get; private set; } = UserId.Empty;
+    public UserId OwnerId { get; private set; } = null!;
 
     public ClassifiedAdState State { get; private set; }
 
@@ -34,6 +38,12 @@ public class ClassifiedAd : AggregateRoot
     public UserId? ApprovedBy { get; private set; }
 
     public List<Picture> Pictures { get; private set; } = new List<Picture>();
+
+    private string DbId
+    {
+        get => $"ClassifiedAd/{Id.Value}";
+        set { }
+    }
 
     private Picture? FirstPicture
         => Pictures.OrderBy(x => x.Order).FirstOrDefault();
@@ -132,14 +142,12 @@ public class ClassifiedAd : AggregateRoot
             ClassifiedAdState.PendingReview =>
                 Title != null
                 && Text != null
-                && Price?.Amount > 0
-                && FirstPicture.HasCorrectSize(),
+                && Price?.Amount > 0,
             ClassifiedAdState.Active =>
                 Title != null
                 && Text != null
                 && Price?.Amount > 0
-                && ApprovedBy != null
-                && FirstPicture.HasCorrectSize(),
+                && ApprovedBy != null,
             _ => true,
         };
         if (!vaild)

@@ -14,12 +14,11 @@ public record UserId
         Value = value;
     }
 
-    private UserId()
+    protected UserId()
     {
-        Value = default;
     }
 
-    public Guid Value { get; }
+    public Guid Value { get; init; }
 
     public static implicit operator Guid(UserId id) => id.Value;
 

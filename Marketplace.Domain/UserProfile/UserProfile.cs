@@ -13,13 +13,13 @@ public class UserProfile : AggregateRoot
             DisplayName = displayName,
         });
 
-    public UserId Id { get; private set; } = UserId.Empty;
+    public UserId Id { get; private set; } = null!;
 
-    public FullName FullName { get; private set; } = FullName.Empty;
+    public FullName FullName { get; private set; } = null!;
 
-    public DisplayName DisplayName { get; private set; } = DisplayName.Empty;
+    public DisplayName DisplayName { get; private set; } = null!;
 
-    public string PhotoUrl { get; private set; } = string.Empty;
+    public string PhotoUrl { get; private set; } = null!;
 
     public void UpdateFullName(FullName fullName)
         => Apply(new Events.UserFullNameUpdated

@@ -1,10 +1,10 @@
 using Marketplace.ClassifiedAd;
-using Marketplace.UserProfile;
 using Marketplace.Domain.ClassifiedAd;
-using Marketplace.Domain.UserProfile;
 using Marketplace.Domain.Shared;
+using Marketplace.Domain.UserProfile;
 using Marketplace.Framework;
 using Marketplace.Infrastructure;
+using Marketplace.UserProfile;
 using Raven.Client.Documents;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +15,7 @@ var store = new DocumentStore
     Database = "Marketplace",
     Conventions =
     {
-        FindIdentityProperty = m => m.Name == "_databaseId",
+        FindIdentityProperty = x => x.Name == "DbId",
     },
 };
 

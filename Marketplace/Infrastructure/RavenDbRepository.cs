@@ -3,7 +3,7 @@ using Raven.Client.Documents.Session;
 
 namespace Marketplace.Infrastructure
 {
-    public class RavenDbRepository<T, TId>
+    public class RavenDbRepository<T, TId> : IDisposable
         where T : AggregateRoot
     {
         private readonly IAsyncDocumentSession _session;
@@ -23,5 +23,10 @@ namespace Marketplace.Infrastructure
 
         public Task<T> Load(TId id)
             => _session.LoadAsync<T>(_entityId(id));
+
+        public void Dispose()
+        {
+            _session.Dispose();
+        }
     }
 }

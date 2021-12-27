@@ -4,8 +4,6 @@ namespace Marketplace.Domain.UserProfile;
 
 public class DisplayName
 {
-    public static readonly DisplayName Empty = new();
-
     internal DisplayName(string value)
     {
         Value = value;
@@ -13,10 +11,9 @@ public class DisplayName
 
     protected DisplayName()
     {
-        Value = string.Empty;
     }
 
-    public string Value { get; }
+    public string Value { get; init; } = null!;
 
     public static implicit operator string(DisplayName name) => name.Value;
 

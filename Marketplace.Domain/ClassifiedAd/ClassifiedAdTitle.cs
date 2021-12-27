@@ -6,7 +6,6 @@ public record ClassifiedAdTitle
 {
     protected ClassifiedAdTitle()
     {
-        Value = string.Empty;
     }
 
     private ClassifiedAdTitle(string value)
@@ -19,7 +18,7 @@ public record ClassifiedAdTitle
         Value = value;
     }
 
-    public string Value { get; }
+    public string Value { get; init; } = null!;
 
     public static implicit operator string(ClassifiedAdTitle title) => title.Value;
 

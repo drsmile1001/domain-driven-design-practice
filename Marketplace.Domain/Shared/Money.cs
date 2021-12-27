@@ -30,9 +30,14 @@ public record Money
         CurrencyCode = currencyCode;
     }
 
-    public decimal Amount { get; }
+    // Satisfy the serialization requirements
+    protected Money()
+    {
+    }
 
-    public string CurrencyCode { get; }
+    public decimal Amount { get; init; }
+
+    public string CurrencyCode { get; init; } = null!;
 
     public static Money operator +(Money a, Money b) => a.Add(b);
 

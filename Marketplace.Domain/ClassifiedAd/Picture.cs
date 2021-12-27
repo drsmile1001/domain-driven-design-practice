@@ -64,9 +64,9 @@ public record PictureSize
     {
     }
 
-    public int Width { get; internal init; }
+    public int Width { get; init; }
 
-    public int Height { get; internal init; }
+    public int Height { get; init; }
 }
 
 public record PictureId(Guid Value);
