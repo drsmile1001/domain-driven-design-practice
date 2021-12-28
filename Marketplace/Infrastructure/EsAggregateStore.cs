@@ -40,7 +40,7 @@ public class EsAggregateStore : IAggregateStore
         aggregate.ClearChanges();
     }
 
-    public async Task<T> Load<T>(string aggregateId)
+    public async Task<T?> Load<T>(string aggregateId)
         where T : AggregateRoot
     {
         var stream = GetStreamName<T>(aggregateId);
@@ -48,6 +48,7 @@ public class EsAggregateStore : IAggregateStore
 
         var events = await _client.ReadStreamAsync(Direction.Forwards, stream, StreamPosition.Start).ToListAsync();
 
+        // TODO: 處理不存在
         aggregate!.Load(events.Select(e =>
         {
             var meta = JsonSerializer.Deserialize<EventMatadata>(Encoding.UTF8.GetString(e.Event.Metadata.Span));

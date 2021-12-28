@@ -1,24 +1,20 @@
-﻿using Marketplace.Domain.UserProfile;
+﻿using Marketplace.Domain.Shared;
+using Marketplace.Domain.UserProfile;
 using Marketplace.Framework;
-using Marketplace.Domain.Shared;
-using System;
 
 namespace Marketplace.UserProfile;
 
 public class UserProfileApplicationService : IApplicationService
 {
-    private readonly IUserProfileRepositoy _repositoy;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IAggregateStore _store;
     private readonly CheckTextForProfanity _checkText;
 
     public UserProfileApplicationService(
-        IUserProfileRepositoy repositoy,
-        IUnitOfWork unitOfWork,
-        CheckTextForProfanity checkTextForProfanity)
+        CheckTextForProfanity checkTextForProfanity,
+        IAggregateStore store)
     {
-        _repositoy = repositoy;
-        _unitOfWork = unitOfWork;
         _checkText = checkTextForProfanity;
+        _store = store;
     }
 
     public async Task Handle(object command)
@@ -26,17 +22,7 @@ public class UserProfileApplicationService : IApplicationService
         switch (command)
         {
             case Contracts.V1.RegisterUser cmd:
-                if (await _repositoy.Exists(cmd.UserId))
-                {
-                    throw new InvalidOperationException($"Entity with id {cmd.UserId} already exists");
-                }
-
-                var userProfile = new Domain.UserProfile.UserProfile(
-                    cmd.UserId,
-                    FullName.FromString(cmd.FullName),
-                    DisplayName.FromString(cmd.DisplayName, _checkText));
-                await _repositoy.Add(userProfile);
-                await _unitOfWork.Commit();
+                await HandleCreate(cmd);
                 break;
             case Contracts.V1.UpdateUserFullName cmd:
                 await HandleUpdate(cmd.UserId, profile => profile.UpdateFullName(FullName.FromString(cmd.FullName)));
@@ -54,18 +40,31 @@ public class UserProfileApplicationService : IApplicationService
         }
     }
 
+    private async Task HandleCreate(Contracts.V1.RegisterUser cmd)
+    {
+        if (await _store.Exits<Domain.UserProfile.UserProfile>(cmd.UserId.ToString()))
+        {
+            throw new InvalidOperationException($"Entity with id {cmd.UserId} already exists");
+        }
+
+        var userProfile = new Domain.UserProfile.UserProfile(
+            cmd.UserId,
+            FullName.FromString(cmd.FullName),
+            DisplayName.FromString(cmd.DisplayName, _checkText));
+        await _store.Save(userProfile, userProfile.Id.Value.ToString());
+    }
+
     private async Task HandleUpdate(
         Guid userProfileId,
         Action<Domain.UserProfile.UserProfile> operation)
     {
-        var classifiedAd = await _repositoy.Load(userProfileId);
+        var classifiedAd = await _store.Load<Domain.UserProfile.UserProfile>(userProfileId.ToString());
         if (classifiedAd == null)
         {
             throw new InvalidOperationException($"Entity with id {userProfileId} cannot be found");
         }
 
         operation(classifiedAd);
-
-        await _unitOfWork.Commit();
+        await _store.Save(classifiedAd, classifiedAd.Id.Value.ToString());
     }
 }

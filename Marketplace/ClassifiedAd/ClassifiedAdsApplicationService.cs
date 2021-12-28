@@ -6,18 +6,15 @@ using static Marketplace.ClassifiedAd.Commands;
 namespace Marketplace.ClassifiedAd;
 public class ClassifiedAdsApplicationService : IApplicationService
 {
-    private readonly IClassifiedAdRepository _repository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IAggregateStore _store;
     private readonly ICurrencyLookup _currencyLookup;
 
     public ClassifiedAdsApplicationService(
         ICurrencyLookup currencyLookup,
-        IClassifiedAdRepository repository,
-        IUnitOfWork unitOfWork)
+        IAggregateStore store)
     {
         _currencyLookup = currencyLookup;
-        _repository = repository;
-        _unitOfWork = unitOfWork;
+        _store = store;
     }
 
     public Task Handle(object command)
@@ -35,26 +32,15 @@ public class ClassifiedAdsApplicationService : IApplicationService
 
     private async Task HandleCreate(V1.Create cmd)
     {
-        if (await _repository.Exists(cmd.Id))
+        if (await _store.Exits<Domain.ClassifiedAd.ClassifiedAd>(cmd.Id.ToString()))
         {
             throw new InvalidOperationException($"Entity with id {cmd.Id} already exists");
         }
 
         var classifiedAd = new Domain.ClassifiedAd.ClassifiedAd(cmd.Id, cmd.OwnerId);
-        await _repository.Add(classifiedAd);
-        await _unitOfWork.Commit();
+        await _store.Save(classifiedAd, classifiedAd.Id.Value.ToString());
     }
 
-    private async Task HandleUpdate(Guid classifiedAdId, Action<Domain.ClassifiedAd.ClassifiedAd> operation)
-    {
-        var classifiedAd = await _repository.Load(classifiedAdId);
-
-        if (classifiedAd == null)
-        {
-            throw new InvalidOperationException($"Entity with id {classifiedAdId} cannot be found");
-        }
-
-        operation(classifiedAd);
-        await _unitOfWork.Commit();
-    }
+    private Task HandleUpdate(Guid classifiedAdId, Action<Domain.ClassifiedAd.ClassifiedAd> operation)
+        => this.HandleUpdate(_store, classifiedAdId.ToString(), operation);
 }

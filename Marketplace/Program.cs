@@ -44,9 +44,8 @@ builder.Services.AddScoped<IClassifiedAdRepository, ClassifiedAdRepository>();
 builder.Services.AddScoped<IUserProfileRepositoy, UserProfileRepository>();
 builder.Services.AddScoped<ClassifiedAdsApplicationService>();
 builder.Services.AddScoped(c => new UserProfileApplicationService(
-    c.GetRequiredService<IUserProfileRepositoy>(),
-    c.GetRequiredService<IUnitOfWork>(),
-    text => purgomalumClient.CheckForProfanity(text).GetAwaiter().GetResult()));
+    text => purgomalumClient.CheckForProfanity(text).GetAwaiter().GetResult(),
+    c.GetRequiredService<IAggregateStore>()));
 
 var app = builder.Build();
 
