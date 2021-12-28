@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using static Marketplace.ClassifiedAd.Contracts;
+using static Marketplace.ClassifiedAd.Commands;
 
 namespace Marketplace.ClassifiedAd;
 
@@ -45,9 +45,17 @@ public class ClassifiedAdsCommandsApi : ControllerBase
         return Ok();
     }
 
-    [Route("publish")]
+    [Route("requestpublish")]
     [HttpPut]
     public async Task<IActionResult> Put(V1.RequestToPublish request)
+    {
+        await _applicationService.Handle(request);
+        return Ok();
+    }
+
+    [Route("publish")]
+    [HttpPut]
+    public async Task<IActionResult> Put(V1.Publish request)
     {
         await _applicationService.Handle(request);
         return Ok();

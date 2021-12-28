@@ -76,6 +76,13 @@ public class ClassifiedAd : AggregateRoot
         Id = Id,
     });
 
+    public void Publish(UserId userId)
+        => Apply(new Events.ClassifiedAdPublished
+        {
+            Id = Id,
+            ApprovedBy = userId,
+        });
+
     public void AddPicture(Uri pictureUri, PictureSize size)
     => Apply(new Events.PictureAddedToAClassifiedAd
     {
@@ -109,10 +116,10 @@ public class ClassifiedAd : AggregateRoot
                 State = ClassifiedAdState.Inactive;
                 break;
             case Events.ClassifiedAdTitleChanged e:
-                Title = ClassifiedAdTitle.FromString(e.Title);
+                Title = e.Title;
                 break;
             case Events.ClassifiedAdTextChanged e:
-                Text = new ClassifiedAdText(e.AdText);
+                Text = e.AdText;
                 break;
             case Events.ClassifiedAdPriceUpdated e:
                 // TODO: 釐清在套用事件時，建立值物件的做法
@@ -124,6 +131,10 @@ public class ClassifiedAd : AggregateRoot
                 break;
             case Events.ClassifiedAdSentForReview:
                 State = ClassifiedAdState.PendingReview;
+                break;
+            case Events.ClassifiedAdPublished e:
+                ApprovedBy = e.ApprovedBy;
+                State = ClassifiedAdState.Active;
                 break;
             case Events.PictureAddedToAClassifiedAd e:
                 var picture = new Picture(Apply);

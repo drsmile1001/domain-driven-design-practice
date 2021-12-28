@@ -1,7 +1,7 @@
 using Marketplace.Domain.ClassifiedAd;
 using Marketplace.Domain.Shared;
 using Marketplace.Framework;
-using static Marketplace.ClassifiedAd.Contracts;
+using static Marketplace.ClassifiedAd.Commands;
 
 namespace Marketplace.ClassifiedAd;
 public class ClassifiedAdsApplicationService : IApplicationService
@@ -29,6 +29,7 @@ public class ClassifiedAdsApplicationService : IApplicationService
         V1.UpdatePrice cmd => HandleUpdate(cmd.Id, c =>
                              c.UpdatePrice(Price.FromDecimal(cmd.Price, cmd.Currency, _currencyLookup))),
         V1.RequestToPublish cmd => HandleUpdate(cmd.Id, c => c.RequestToPublish()),
+        V1.Publish cmd => HandleUpdate(cmd.Id, c => c.Publish(cmd.Id)),
         _ => throw new InvalidOperationException($"Command type {command.GetType().FullName} is unknown"),
     };
 

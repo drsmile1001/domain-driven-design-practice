@@ -37,6 +37,13 @@ public static class Events
         public Guid Id { get; init; }
     }
 
+    public class ClassifiedAdPublished
+    {
+        public Guid Id { get; init; }
+
+        public Guid ApprovedBy { get; init; }
+    }
+
     public class PictureAddedToAClassifiedAd
     {
         public Guid PictureId { get; init; }
