@@ -1,3 +1,4 @@
+using EventStore.Client;
 using Marketplace.ClassifiedAd;
 using Marketplace.Domain.ClassifiedAd;
 using Marketplace.Domain.Shared;
@@ -29,6 +30,13 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<EventStoreClient>(c =>
+{
+    var settings = EventStoreClientSettings.Create("esdb://admin:changeit@114.32.171.117:2113?tls=false");
+    var client = new EventStoreClient(settings);
+    return client;
+});
+builder.Services.AddSingleton<IAggregateStore, EsAggregateStore>();
 builder.Services.AddSingleton<ICurrencyLookup, FixedCurrencyLookup>();
 builder.Services.AddScoped(c => store.OpenAsyncSession());
 builder.Services.AddScoped<IUnitOfWork, RavenDbUnitOfWork>();

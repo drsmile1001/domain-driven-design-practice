@@ -1,6 +1,7 @@
 ﻿namespace Marketplace.Framework;
 public abstract class AggregateRoot : IInternalEventHandler
 {
+    public ulong Version { get; private set; } = ulong.MaxValue;
     private readonly List<object> _changes;
 
     protected AggregateRoot() => _changes = new List<object>();
@@ -10,6 +11,22 @@ public abstract class AggregateRoot : IInternalEventHandler
 
     public IEnumerable<object> GetChanges() =>
         _changes.AsEnumerable();
+
+    public void Load(IEnumerable<object> history)
+    {
+        foreach (var e in history)
+        {
+            When(e);
+            if (Version == ulong.MaxValue)
+            {
+                Version = 0;
+            }
+            else
+            {
+                Version++;
+            }
+        }
+    }
 
     public void ClearChanges() => _changes.Clear();
 
