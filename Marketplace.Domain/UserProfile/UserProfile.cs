@@ -21,6 +21,12 @@ public class UserProfile : AggregateRoot
 
     public string PhotoUrl { get; private set; } = null!;
 
+    private string DbId
+    {
+        get => $"UserProfile/{Id.Value}";
+        set { }
+    }
+
     public void UpdateFullName(FullName fullName)
         => Apply(new Events.UserFullNameUpdated
         {

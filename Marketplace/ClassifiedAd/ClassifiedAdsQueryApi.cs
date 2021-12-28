@@ -26,7 +26,8 @@ public class ClassifiedAdsQueryApi : ControllerBase
     [Route("myads")]
     public async Task<IActionResult> Get(QueryModels.GetOwnersClassifiedAd request)
     {
-        return Ok();
+        var myads = await _session.Query(request);
+        return Ok(myads);
     }
 
     [HttpGet]
@@ -34,6 +35,7 @@ public class ClassifiedAdsQueryApi : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> Get(QueryModels.GetPublicClassifiedAd request)
     {
-        return Ok();
+        var found = await _session.Query(request);
+        return Ok(found);
     }
 }
