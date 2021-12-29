@@ -41,10 +41,16 @@ builder.Services.AddSingleton<IAggregateStore, EsAggregateStore>();
 builder.Services.AddSingleton<ICurrencyLookup, FixedCurrencyLookup>();
 builder.Services.AddSingleton<List<ReadModels.ClassifiedAdDetails>>(c => new List<ReadModels.ClassifiedAdDetails>());
 builder.Services.AddSingleton<List<ReadModels.UserDetails>>(c => new List<ReadModels.UserDetails>());
-builder.Services.AddSingleton<ProjectionManager>(c => new ProjectionManager(
-    c.GetRequiredService<EventStoreClient>(),
-    new ClassifiedAdDetailsProjection(c.GetRequiredService<List<ReadModels.ClassifiedAdDetails>>()),
-    new UserDetailsProjection(c.GetRequiredService<List<ReadModels.UserDetails>>())));
+builder.Services.AddSingleton<ProjectionManager>(c =>
+{
+    var userDetails = c.GetRequiredService<List<ReadModels.UserDetails>>();
+    var a = new ClassifiedAdDetailsProjection(
+        c.GetRequiredService<List<ReadModels.ClassifiedAdDetails>>(),
+        userId => userDetails.FirstOrDefault(x => x.UserId == userId)?.DisplayName ?? "--");
+    var b = new UserDetailsProjection(c.GetRequiredService<List<ReadModels.UserDetails>>());
+
+    return new ProjectionManager(c.GetRequiredService<EventStoreClient>(), a, b);
+});
 builder.Services.AddScoped(c => store.OpenAsyncSession());
 builder.Services.AddScoped<IUnitOfWork, RavenDbUnitOfWork>();
 builder.Services.AddScoped<IClassifiedAdRepository, ClassifiedAdRepository>();

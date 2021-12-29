@@ -7,10 +7,12 @@ namespace Marketplace.Projections;
 public class ClassifiedAdDetailsProjection : IProjection
 {
     private readonly List<ReadModels.ClassifiedAdDetails> _items;
+    private readonly Func<Guid, string> _getUserDisplayName;
 
-    public ClassifiedAdDetailsProjection(List<ReadModels.ClassifiedAdDetails> items)
+    public ClassifiedAdDetailsProjection(List<ReadModels.ClassifiedAdDetails> items, Func<Guid, string> getUserDisplayName)
     {
         _items = items;
+        _getUserDisplayName = getUserDisplayName;
     }
 
     public Task Project(object @event)
@@ -22,6 +24,7 @@ public class ClassifiedAdDetailsProjection : IProjection
                 {
                     ClassifiedAdId = e.Id,
                     SellerId = e.OwnerId,
+                    SellersDisplayName = _getUserDisplayName(e.OwnerId),
                 });
                 break;
             case Events.ClassifiedAdTitleChanged e:
