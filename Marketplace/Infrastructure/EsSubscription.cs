@@ -42,6 +42,7 @@ public class EsSubscription : BackgroundService
                 _items.Add(new ReadModels.ClassifiedAdDetails
                 {
                     ClassifiedAdId = e.Id,
+                    SellerId = e.OwnerId,
                 });
                 break;
             case Events.ClassifiedAdTitleChanged e:
@@ -56,6 +57,9 @@ public class EsSubscription : BackgroundService
                     ad.Price = e.Price;
                     ad.CurrencyCode = e.CurrencyCode;
                 });
+                break;
+            case Domain.UserProfile.Events.UserDisplayNameUpdated e:
+                UpdateMultipleItems(x => x.SellerId == e.UserId, x => x.SellersDisplayName = e.DisplayName);
                 break;
             default:
                 break;
@@ -73,5 +77,15 @@ public class EsSubscription : BackgroundService
         }
 
         update(item);
+    }
+
+    private void UpdateMultipleItems(
+        Func<ReadModels.ClassifiedAdDetails, bool> query,
+        Action<ReadModels.ClassifiedAdDetails> update)
+    {
+        foreach (var item in _items.Where(query))
+        {
+            update(item);
+        }
     }
 }

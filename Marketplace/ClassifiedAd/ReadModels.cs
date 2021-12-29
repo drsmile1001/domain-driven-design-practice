@@ -4,7 +4,9 @@ public static class ReadModels
 {
     public class ClassifiedAdDetails
     {
-        public Guid ClassifiedAdId { get; set; }
+        public Guid ClassifiedAdId { get; init; }
+
+        public Guid SellerId { get; init; }
 
         public string Title { get; set; } = null!;
 
