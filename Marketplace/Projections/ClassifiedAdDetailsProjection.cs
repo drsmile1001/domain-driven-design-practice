@@ -1,41 +1,20 @@
-using EventStore.Client;
 using Marketplace.ClassifiedAd;
 using Marketplace.Domain.ClassifiedAd;
+using Marketplace.Framework;
 
-namespace Marketplace.Infrastructure;
+namespace Marketplace.Projections;
 
-public class EsSubscription : BackgroundService
+public class ClassifiedAdDetailsProjection : IProjection
 {
-    private readonly EventStoreClient _client;
-    private readonly IList<ReadModels.ClassifiedAdDetails> _items;
-    private StreamSubscription? _subscription;
+    private readonly List<ReadModels.ClassifiedAdDetails> _items;
 
-    public EsSubscription(EventStoreClient client, IList<ReadModels.ClassifiedAdDetails> items)
+    public ClassifiedAdDetailsProjection(List<ReadModels.ClassifiedAdDetails> items)
     {
-        _client = client;
         _items = items;
     }
 
-    public override Task StopAsync(CancellationToken cancellationToken)
+    public Task Project(object @event)
     {
-        _subscription?.Dispose();
-        return base.StopAsync(cancellationToken);
-    }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        _subscription = await _client.SubscribeToAllAsync(EventAppeared, cancellationToken: stoppingToken);
-    }
-
-    private Task EventAppeared(StreamSubscription subscription, ResolvedEvent resolvedEvent, CancellationToken cancellationToken)
-    {
-        if (!resolvedEvent.Event.EventType.StartsWith("ClassifiedAd"))
-        {
-            return Task.CompletedTask;
-        }
-
-        var @event = resolvedEvent.Deserialize();
-        Console.WriteLine($"Projecting event {@event.GetType().Name}");
         switch (@event)
         {
             case Events.ClassifiedAdCreated e:

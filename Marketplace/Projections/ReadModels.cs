@@ -1,4 +1,4 @@
-namespace Marketplace.ClassifiedAd;
+namespace Marketplace.Projections;
 
 public static class ReadModels
 {
@@ -21,15 +21,11 @@ public static class ReadModels
         public string[] PhotoUrls { get; set; } = null!;
     }
 
-    public class ClassifiedAdListItem
+    public class UserDetails
     {
-        public Guid ClassifiedAdId { get; set; }
+        public Guid UserId { get; init; }
 
-        public string Title { get; set; } = null!;
-
-        public decimal Price { get; set; }
-
-        public string CurrencyCode { get; set; } = null!;
+        public string DisplayName { get; set; } = null!;
 
         public string PhotoUrl { get; set; } = null!;
     }

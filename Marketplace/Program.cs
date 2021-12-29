@@ -5,6 +5,7 @@ using Marketplace.Domain.Shared;
 using Marketplace.Domain.UserProfile;
 using Marketplace.Framework;
 using Marketplace.Infrastructure;
+using Marketplace.Projections;
 using Marketplace.UserProfile;
 using Raven.Client.Documents;
 
@@ -38,8 +39,12 @@ builder.Services.AddSingleton<EventStoreClient>(c =>
 });
 builder.Services.AddSingleton<IAggregateStore, EsAggregateStore>();
 builder.Services.AddSingleton<ICurrencyLookup, FixedCurrencyLookup>();
-builder.Services.AddSingleton<IList<ReadModels.ClassifiedAdDetails>>(c => new List<ReadModels.ClassifiedAdDetails>());
-builder.Services.AddSingleton<EsSubscription>();
+builder.Services.AddSingleton<List<ReadModels.ClassifiedAdDetails>>(c => new List<ReadModels.ClassifiedAdDetails>());
+builder.Services.AddSingleton<List<ReadModels.UserDetails>>(c => new List<ReadModels.UserDetails>());
+builder.Services.AddSingleton<ProjectionManager>(c => new ProjectionManager(
+    c.GetRequiredService<EventStoreClient>(),
+    new ClassifiedAdDetailsProjection(c.GetRequiredService<List<ReadModels.ClassifiedAdDetails>>()),
+    new UserDetailsProjection(c.GetRequiredService<List<ReadModels.UserDetails>>())));
 builder.Services.AddScoped(c => store.OpenAsyncSession());
 builder.Services.AddScoped<IUnitOfWork, RavenDbUnitOfWork>();
 builder.Services.AddScoped<IClassifiedAdRepository, ClassifiedAdRepository>();
@@ -48,7 +53,7 @@ builder.Services.AddScoped<ClassifiedAdsApplicationService>();
 builder.Services.AddScoped(c => new UserProfileApplicationService(
     text => purgomalumClient.CheckForProfanity(text).GetAwaiter().GetResult(),
     c.GetRequiredService<IAggregateStore>()));
-builder.Services.AddHostedService<EsSubscription>(p => p.GetRequiredService<EsSubscription>());
+builder.Services.AddHostedService<ProjectionManager>(p => p.GetRequiredService<ProjectionManager>());
 
 var app = builder.Build();
 

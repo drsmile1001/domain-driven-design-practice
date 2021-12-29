@@ -1,4 +1,5 @@
 using System.Net;
+using Marketplace.Projections;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Marketplace.ClassifiedAd;
@@ -6,9 +7,9 @@ namespace Marketplace.ClassifiedAd;
 [Route("/ad")]
 public class ClassifiedAdsQueryApi : ControllerBase
 {
-    private readonly IList<ReadModels.ClassifiedAdDetails> _items;
+    private readonly List<ReadModels.ClassifiedAdDetails> _items;
 
-    public ClassifiedAdsQueryApi(IList<ReadModels.ClassifiedAdDetails> items)
+    public ClassifiedAdsQueryApi(List<ReadModels.ClassifiedAdDetails> items)
     {
         _items = items;
     }
