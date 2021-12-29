@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.Json;
 using EventStore.Client;
 using Marketplace.Framework;
@@ -49,13 +48,7 @@ public class EsAggregateStore : IAggregateStore
         var events = await _client.ReadStreamAsync(Direction.Forwards, stream, StreamPosition.Start).ToListAsync();
 
         // TODO: 處理不存在
-        aggregate!.Load(events.Select(e =>
-        {
-            var meta = JsonSerializer.Deserialize<EventMatadata>(Encoding.UTF8.GetString(e.Event.Metadata.Span));
-            var dataType = Type.GetType(meta!.ClrType);
-            var data = JsonSerializer.Deserialize(e.Event.Data.Span, dataType!);
-            return data!;
-        }).ToArray());
+        aggregate!.Load(events.Select(e => e.Deserialize()).ToArray());
 
         return aggregate;
     }
@@ -66,9 +59,9 @@ public class EsAggregateStore : IAggregateStore
         var state = await _client.ReadStreamAsync(Direction.Forwards, stream, StreamPosition.Start, 1).ReadState;
         return state != ReadState.StreamNotFound;
     }
+}
 
-    private class EventMatadata
-    {
-        public string ClrType { get; init; } = null!;
-    }
+public class EventMatadata
+{
+    public string ClrType { get; init; } = null!;
 }

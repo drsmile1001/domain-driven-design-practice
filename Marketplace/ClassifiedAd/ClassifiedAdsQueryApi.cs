@@ -1,41 +1,24 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Raven.Client.Documents.Session;
 
 namespace Marketplace.ClassifiedAd;
 
 [Route("/ad")]
 public class ClassifiedAdsQueryApi : ControllerBase
 {
-    private readonly IAsyncDocumentSession _session;
+    private readonly IList<ReadModels.ClassifiedAdDetails> _items;
 
-    public ClassifiedAdsQueryApi(IAsyncDocumentSession session)
+    public ClassifiedAdsQueryApi(IList<ReadModels.ClassifiedAdDetails> items)
     {
-        _session = session;
-    }
-
-    [HttpGet]
-    [Route("list")]
-    public async Task<IActionResult> Get(QueryModels.GetPublishedClassifiedAds request)
-    {
-        var ads = await _session.Query(request);
-        return Ok(ads);
-    }
-
-    [HttpGet]
-    [Route("myads")]
-    public async Task<IActionResult> Get(QueryModels.GetOwnersClassifiedAd request)
-    {
-        var myads = await _session.Query(request);
-        return Ok(myads);
+        _items = items;
     }
 
     [HttpGet]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<IActionResult> Get(QueryModels.GetPublicClassifiedAd request)
+    public IActionResult Get(QueryModels.GetPublicClassifiedAd request)
     {
-        var found = await _session.Query(request);
+        var found = _items.Query(request);
         return Ok(found);
     }
 }

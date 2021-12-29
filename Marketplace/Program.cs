@@ -38,6 +38,8 @@ builder.Services.AddSingleton<EventStoreClient>(c =>
 });
 builder.Services.AddSingleton<IAggregateStore, EsAggregateStore>();
 builder.Services.AddSingleton<ICurrencyLookup, FixedCurrencyLookup>();
+builder.Services.AddSingleton<IList<ReadModels.ClassifiedAdDetails>>(c => new List<ReadModels.ClassifiedAdDetails>());
+builder.Services.AddSingleton<EsSubscription>();
 builder.Services.AddScoped(c => store.OpenAsyncSession());
 builder.Services.AddScoped<IUnitOfWork, RavenDbUnitOfWork>();
 builder.Services.AddScoped<IClassifiedAdRepository, ClassifiedAdRepository>();
@@ -46,6 +48,7 @@ builder.Services.AddScoped<ClassifiedAdsApplicationService>();
 builder.Services.AddScoped(c => new UserProfileApplicationService(
     text => purgomalumClient.CheckForProfanity(text).GetAwaiter().GetResult(),
     c.GetRequiredService<IAggregateStore>()));
+builder.Services.AddHostedService<EsSubscription>(p => p.GetRequiredService<EsSubscription>());
 
 var app = builder.Build();
 
